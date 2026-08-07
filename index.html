@@ -12,7 +12,7 @@
     }
 
     body {
-      background-color: #000;
+      background-color: #0b0b0b;
       min-height: 100vh;
       display: flex;
       justify-content: center;
@@ -20,126 +20,153 @@
       overflow: hidden;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       transition: background-color 1.5s ease;
+      position: relative;
     }
 
-    /* Fondo con siluetas de flores rojas */
-    .flower-container {
+    /* Fondo con patrón repetido de rosas rojas tipo tapiz de WhatsApp */
+    .bg-pattern {
       position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
-      display: flex;
-      justify-content: space-around;
-      align-items: flex-end;
-      opacity: 0.6;
-      transition: opacity 1s ease;
+      /* Rosa vectorial en formato SVG codificado en Data URI */
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 100 100'%3E%3Cpath fill='%23880015' opacity='0.25' d='M50,20 C35,5 15,20 20,40 C10,50 15,75 35,80 C50,95 70,80 80,65 C95,50 85,30 70,20 C60,10 50,20 50,20 Z M50,35 C58,35 65,42 65,50 C65,58 58,65 50,65 C42,65 35,58 35,50 C35,42 42,35 50,35 Z'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-size: 90px 90px;
+      transition: opacity 1.2s ease;
     }
 
-    .flower {
-      width: 120px;
-      height: 250px;
-      fill: #8b0000;
-      filter: drop-shadow(0 0 8px rgba(255, 0, 0, 0.4));
-    }
-
-    /* Destello central */
+    /* Destello de luz blanca en el centro */
     .flash {
       position: absolute;
-      width: 10px;
-      height: 10px;
-      background: #fff;
+      width: 20px;
+      height: 20px;
+      background: #ffffff;
       border-radius: 50%;
-      box-shadow: 0 0 50px 30px #ff3366, 0 0 100px 60px #ffffff;
+      box-shadow: 0 0 80px 50px #ffffff, 0 0 160px 100px #ffffff;
       opacity: 0;
       transform: scale(0);
-      transition: all 1.5s ease-out;
+      transition: transform 1.2s ease-in-out, opacity 1s ease-in-out;
       z-index: 2;
+      pointer-events: none;
     }
 
     .flash.active {
       opacity: 1;
-      transform: scale(8);
+      transform: scale(35);
     }
 
-    /* Mensajes */
-    .message {
+    /* Contenedor principal de mensajes */
+    .container {
       position: relative;
       z-index: 3;
-      color: #ffffff;
-      font-size: 2.2rem;
       text-align: center;
       padding: 20px;
-      text-shadow: 0 0 15px rgba(255, 50, 50, 0.8);
+      max-width: 90%;
+    }
+
+    .emoji {
+      font-size: 4.5rem;
       opacity: 0;
-      transition: opacity 2s ease;
+      transform: scale(0.5);
+      transition: opacity 1s ease, transform 1s ease;
+      margin-bottom: 15px;
+    }
+
+    .emoji.show {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .message {
+      color: #ffffff;
+      font-size: 2.2rem;
+      font-weight: 600;
+      line-height: 1.4;
+      text-shadow: 0 0 15px rgba(255, 50, 50, 0.8), 0 0 30px rgba(255, 0, 0, 0.5);
+      opacity: 0;
+      transform: translateY(15px);
+      transition: opacity 1.2s ease, transform 1.2s ease;
     }
 
     .message.show {
       opacity: 1;
+      transform: translateY(0);
     }
 
-    /* Estado Final (Pantalla Blanca) */
+    /* Estado Final (Pantalla Blanca con Fin) */
     body.final-state {
       background-color: #ffffff;
     }
 
-    body.final-state .flower-container,
+    body.final-state .bg-pattern {
+      opacity: 0;
+    }
+
     body.final-state .flash {
+      opacity: 0;
+    }
+
+    body.final-state .emoji {
       display: none;
     }
 
     body.final-state .message {
-      color: #222222;
+      color: #111111;
       font-size: 3rem;
-      text-shadow: none;
       font-weight: bold;
+      text-shadow: none;
     }
   </style>
 </head>
 <body>
 
-  <!-- Siluetas SVG de flores -->
-  <div class="flower-container" id="flowers">
-    <svg class="flower" viewBox="0 0 100 200">
-      <path d="M50,200 Q45,140 50,80 C30,70 20,40 40,20 C50,10 50,30 50,30 C50,30 50,10 60,20 C80,40 70,70 50,80 Z"/>
-    </svg>
-    <svg class="flower" viewBox="0 0 100 200" style="height: 300px;">
-      <path d="M50,200 Q55,130 50,70 C20,60 10,30 35,10 C50,0 50,25 50,25 C50,25 50,0 65,10 C90,30 80,60 50,70 Z"/>
-    </svg>
-    <svg class="flower" viewBox="0 0 100 200">
-      <path d="M50,200 Q45,140 50,80 C30,70 20,40 40,20 C50,10 50,30 50,30 C50,30 50,10 60,20 C80,40 70,70 50,80 Z"/>
-    </svg>
-  </div>
+  <!-- Fondo tipo tapiz de WhatsApp con siluetas de rosas -->
+  <div class="bg-pattern" id="bgPattern"></div>
 
-  <!-- Elemento para el destello -->
+  <!-- Destello de luz -->
   <div class="flash" id="flash"></div>
 
-  <!-- Texto central -->
-  <div class="message" id="text"></div>
+  <!-- Contenido principal -->
+  <div class="container">
+    <div class="emoji" id="emoji">😊</div>
+    <div class="message" id="text"></div>
+  </div>
 
   <script>
+    const emojiElement = document.getElementById('emoji');
     const textElement = document.getElementById('text');
     const flashElement = document.getElementById('flash');
 
-    // Paso 1: A los 10 segundos ocurre el destello y aparece el mensaje
+    // 1. A los 2 segundos aparece la carita feliz
+    setTimeout(() => {
+      emojiElement.classList.add('show');
+    }, 2000);
+
+    // 2. A los 3.5 segundos aparece el saludo
+    setTimeout(() => {
+      textElement.textContent = "Bella dama linda tarde siga sonriendo";
+      textElement.classList.add('show');
+    }, 3500);
+
+    // 3. A los 8.5 segundos se oculta el texto y la carita
+    setTimeout(() => {
+      textElement.classList.remove('show');
+      emojiElement.classList.remove('show');
+    }, 8500);
+
+    // 4. A los 9.5 segundos se activa el destello de luz blanca
     setTimeout(() => {
       flashElement.classList.add('active');
+    }, 9500);
 
-      setTimeout(() => {
-        textElement.textContent = "Que linda tarde Bella Dama Gladys";
-        textElement.classList.add('show');
-      }, 500);
-    }, 10000);
-
-    // Paso 2: 5 segundos después del mensaje (segundo 15), la pantalla se vuelve blanca con "Fin"
+    // 5. A los 10.5 segundos la pantalla queda blanca y aparece "Fin"
     setTimeout(() => {
       document.body.classList.add('final-state');
-      textElement.classList.remove('show');
-
-      setTimeout(() => {
-        textElement.textContent = "Fin";
-        textElement.classList.add('show');
-      }, 500);
-    }, 15000);
+      textElement.textContent = "Fin";
+      textElement.classList.add('show');
+    }, 10500);
   </script>
 </body>
 </html>
